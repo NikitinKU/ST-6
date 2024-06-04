@@ -1,3 +1,4 @@
+package com.example;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,16 +8,52 @@ import java.util.ArrayList;
 public class GameTest {
 
     @Test
-    public void testTicTacToePanel() {
+    public void testTicTacToeGrid() {
         TicTacToePanel panel = new TicTacToePanel(new GridLayout(3, 3));
         assertNotNull(panel);
         assertEquals(9, panel.getComponentCount());
     }
 
     @Test
-    public void testPrintIntArray() {
+    public void testPrintArrayBoard() {
         int[] board = {1, 2, 3, 4, 5, 6, 7, 8, 9};
         Utility.print(board);
+    }
+
+    @Test
+    public void testMiniMaxForWinningMove() {
+        Game game = new Game();
+        char[] board = {'X', 'X', ' ', 'O', 'O', ' ', ' ', ' ', ' '};
+        game.player1.symbol = 'X';
+        int move = game.MiniMax(board, game.player1);
+        assertEquals(3, move, "MiniMax should select the winning move");
+    }
+
+    @Test
+    public void testMiniMaxForBlockingMove() {
+        Game game = new Game();
+        char[] board = {'X', 'X', ' ', 'O', 'O', ' ', ' ', ' ', ' '};
+        game.player2.symbol = 'O';
+        int move = game.MiniMax(board, game.player2);
+        assertEquals(3, move, "MiniMax should select the blocking move");
+    }
+
+
+    @Test
+    public void testPlayerSymbolAssignment() {
+        Game game = new Game();
+        assertEquals('X', game.player1.symbol, "Player 1 should have the 'X' symbol");
+        assertEquals('O', game.player2.symbol, "Player 2 should have the 'O' symbol");
+    }
+
+    @Test
+    public void testRandomMoveSelection() {
+        Game game = new Game();
+        char[] boardRandomMove = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+        ArrayList<Integer> moves = new ArrayList<>();
+        game.generateMoves(boardRandomMove, moves);
+        int move = game.MiniMax(boardRandomMove, game.player1);
+        assertTrue(moves.contains(move), "Random move should be one of the available moves");
     }
 
     @Test
@@ -29,7 +66,7 @@ public class GameTest {
     }
 
     @Test
-    public void testCheckState() {
+    public void testStateCheck() {
         Game game = new Game();
         char[] boardXWin = {'X', 'X', 'X', ' ', ' ', ' ', ' ', ' ', ' '};
         char[] boardOWin = {'O', 'O', 'O', ' ', ' ', ' ', ' ', ' ', ' '};
@@ -47,7 +84,7 @@ public class GameTest {
     }
 
     @Test
-    public void testGenerateMoves() {
+    public void testMoveGeneration() {
         Game game = new Game();
         ArrayList<Integer> moves = new ArrayList<>();
         char[] board = {'X', 'O', 'X', ' ', ' ', ' ', ' ', ' ', ' '};
@@ -58,7 +95,7 @@ public class GameTest {
     }
 
     @Test
-    public void testEvaluatePosition() {
+    public void testPositionEvaluation() {
         Game game = new Game();
         char[] boardXWin = {'X', 'X', 'X', ' ', ' ', ' ', ' ', ' ', ' '};
         char[] boardDraw = {'X', 'O', 'X', 'X', 'O', 'O', 'O', 'X', 'X'};
@@ -69,7 +106,7 @@ public class GameTest {
     }
 
     @Test
-    public void testMinimax() {
+    public void testMiniMax() {
         Game game = new Game();
         char[] board = {'X', 'O', 'X', ' ', ' ', ' ', ' ', ' ', ' '};
         game.player2.symbol = 'O';
@@ -79,7 +116,7 @@ public class GameTest {
 
 
     @Test
-    public void testGameInitialState() {
+    public void testStateGameInit() {
         Game game = new Game();
         assertEquals(State.PLAYING, game.state);
         assertEquals('X', game.player1.symbol);
@@ -88,14 +125,14 @@ public class GameTest {
     }
 
     @Test
-    public void testPlayerInitialSymbols() {
+    public void testSymbolsPlayerInit() {
         Game game = new Game();
         assertEquals('X', game.player1.symbol, "Player 1 should be 'X'");
         assertEquals('O', game.player2.symbol, "Player 2 should be 'O'");
     }
 
     @Test
-    public void testEmptyBoardInitial() {
+    public void testEmptyBoardInit() {
         Game game = new Game();
         for (char cell : game.board) {
             assertEquals(' ', cell, "All cells should be initially empty");
@@ -103,7 +140,7 @@ public class GameTest {
     }
 
     @Test
-    public void testCheckStateOngoing() {
+    public void testStateOngoingCheck() {
         Game game = new Game();
         char[] boardOngoing = {'X', 'O', 'X', 'O', 'X', ' ', ' ', ' ', ' '};
         game.symbol = 'X';
@@ -111,14 +148,14 @@ public class GameTest {
     }
 
     @Test
-    public void testEvaluateOngoingPosition() {
+    public void testOngoingPosEvaluation() {
         Game game = new Game();
         char[] boardOngoing = {'X', 'O', 'X', 'O', 'X', ' ', ' ', ' ', ' '};
         assertEquals(-1, game.evaluatePosition(boardOngoing, game.player1));
     }
 
     @Test
-    public void testMaxMoveEndgame() {
+    public void testEndgameMaxMove() {
         Game game = new Game();
         char[] boardXWin = {'X', 'X', 'X', ' ', ' ', ' ', ' ', ' ', ' '};
         int maxMoveValue = game.MaxMove(boardXWin, game.player1);
@@ -126,11 +163,44 @@ public class GameTest {
     }
 
     @Test
-    public void testMinMoveEndgame() {
+    public void testEndgameMinMove() {
         Game game = new Game();
         char[] boardOWin = {'O', 'O', 'O', ' ', ' ', ' ', ' ', ' ', ' '};
         int minMoveValue = game.MinMove(boardOWin, game.player2);
         assertEquals(Game.INF, minMoveValue);
+    }
+
+    @Test
+    public void testBoardInitialization() {
+        Game game = new Game();
+        for (char cell : game.board) {
+            assertEquals(' ', cell, "All cells should be initially empty");
+        }
+    }
+
+    @Test
+    public void testStateCheckDiagonalWin() {
+        Game game = new Game();
+        char[] boardDiagonalWin = {'X', ' ', 'O', ' ', 'X', ' ', 'O', ' ', 'X'};
+        game.symbol = 'X';
+        assertEquals(State.XWIN, game.checkState(boardDiagonalWin), "Board should be recognized as a diagonal win for player X");
+    }
+
+    @Test
+    public void testStateCheckColumnWin() {
+        Game game = new Game();
+        char[] boardColumnWin = {'X', ' ', ' ', 'X', ' ', ' ', 'X', ' ', ' '};
+        game.symbol = 'X';
+        assertEquals(State.XWIN, game.checkState(boardColumnWin), "Board should be recognized as a column win for player X");
+    }
+
+    @Test
+    public void testMiniMaxForBlockingFork() {
+        Game game = new Game();
+        char[] board = {'X', 'X', ' ', ' ', 'O', ' ', ' ', ' ', ' '};
+        game.player2.symbol = 'O';
+        int move = game.MiniMax(board, game.player2);
+        assertEquals(3, move, "MiniMax should select a move that blocks a fork");
     }
 
 }

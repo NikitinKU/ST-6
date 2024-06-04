@@ -1,11 +1,14 @@
-import java.awt.*;
-import java.awt.event.*;
+package com.example;
+
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.IOException;
 
 enum State { PLAYING, OWIN, XWIN, DRAW };
 
